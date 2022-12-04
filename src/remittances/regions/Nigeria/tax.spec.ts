@@ -4,15 +4,15 @@ import { Tax } from './tax';
 import { ProcessTaxPayload, TaxType, TaxTypeEnum } from './types';
 
 const getTaxPayload = (payload: Partial<ProcessTaxPayload>) => {
-  const { taxSettings, ..._payload } = payload;
+  const { tax, ..._payload } = payload;
   return {
     salary: 30000,
-    taxSettings: {
+    tax: {
       taxRelief: [],
       enabled: true,
       type: 'PAYE' as TaxType,
       whTaxRate: 0,
-      ...(taxSettings || {}),
+      ...(tax || {}),
     },
     totalBonus: 0,
     ..._payload,
@@ -26,7 +26,7 @@ describe('Nigerian Tax', () => {
 
   describe('process', () => {
     it('should return 0 if tax is disabled in settings', () => {
-      const payload = getTaxPayload({ taxSettings: { enabled: false } });
+      const payload = getTaxPayload({ tax: { enabled: false } });
 
       const tax = Tax.process(payload);
 
@@ -44,7 +44,7 @@ describe('Nigerian Tax', () => {
     it('should calculate Withholding Tax if selected', () => {
       const whTaxRate = 0.05;
       const payload = getTaxPayload({
-        taxSettings: { type: TaxTypeEnum.WITHHOLDING, whTaxRate },
+        tax: { type: TaxTypeEnum.WITHHOLDING, whTaxRate },
       });
 
       const tax = Tax.process(payload);
@@ -54,7 +54,7 @@ describe('Nigerian Tax', () => {
 
     it('should consider tax reliefs', () => {
       const payload = getTaxPayload({
-        taxSettings: {
+        tax: {
           taxRelief: [
             { name: 'health insurance', value: 15000 },
             { name: 'job loss insurance', value: 15000 },
@@ -69,7 +69,7 @@ describe('Nigerian Tax', () => {
 
     it('should consider tax reliefs', () => {
       const payload = getTaxPayload({
-        taxSettings: {
+        tax: {
           taxRelief: [
             { name: 'health insurance', value: 15000 },
             { name: 'job loss insurance', value: 15000 },

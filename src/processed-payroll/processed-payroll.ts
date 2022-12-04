@@ -27,7 +27,7 @@ export class ProcessedPayroll<T extends Record<string, unknown>> {
 
   private payloadEmployeesKeyedById: Record<
     string,
-    IProcessedPayrollPayloadEmployee
+    IProcessedPayrollPayloadEmployee<T>
   > = {};
 
   private data: ReturnType<typeof this.process>;
@@ -40,7 +40,7 @@ export class ProcessedPayroll<T extends Record<string, unknown>> {
     return this.data;
   }
 
-  updateEmployees(...employees: IProcessedPayrollPayloadEmployee[]) {
+  updateEmployees(...employees: IProcessedPayrollPayloadEmployee<T>[]) {
     let newData = { ...this.data };
 
     this.process({
@@ -111,7 +111,7 @@ export class ProcessedPayroll<T extends Record<string, unknown>> {
   }
 
   updateAddons(...addons: IProcessedPayrollPayloadAddon[]) {
-    const employees: IProcessedPayrollPayloadEmployee[] = [];
+    const employees: IProcessedPayrollPayloadEmployee<T>[] = [];
 
     this.initAddons(addons, (addon) => {
       const employee = this.payloadEmployeesKeyedById[addon.entity];
@@ -187,13 +187,14 @@ export class ProcessedPayroll<T extends Record<string, unknown>> {
     this.data = this.process({ employees: this.payload.employees });
   }
 
-  private process(payload: ProcessPayload) {
+  private process(payload: ProcessPayload<T>) {
     const { employees, beforeEach, afterEach } = payload;
     const {
       year,
       proRateMonth,
       country,
       remittanceProcessingContext = {},
+      beforeEach: _beforeEach,
     } = this.payload;
     const date = moment().year(year).month(proRateMonth);
     const workDaysInMonth = Util.calculateWorkDaysBetweenDates(
@@ -210,13 +211,20 @@ export class ProcessedPayroll<T extends Record<string, unknown>> {
     let totalRemittances = 0;
 
     employees.forEach((_employee, payloadArrayIndex) => {
+      let group = this.groupsKeyedById[_employee.group];
+
+      const transformed = _beforeEach
+        ? _beforeEach({ employee: _employee, group })
+        : { employee: _employee, group };
+
+      group = transformed.group;
+
       const employee = beforeEach
-        ? beforeEach({ employee: _employee })
-        : _employee;
+        ? beforeEach({ employee: transformed.employee })
+        : transformed.employee;
 
       this.payloadEmployeesKeyedById[employee.id] = employee;
 
-      const group = this.groupsKeyedById[employee.group];
       const addons = this.addonsKeyedByEmployee[employee.id] || {
         bonuses: [],
         deductions: [],
@@ -250,6 +258,7 @@ export class ProcessedPayroll<T extends Record<string, unknown>> {
 
       const employeeRemittances = Remittances.process({
         ...remittanceProcessingContext,
+        ...(employee.remittanceProcessingContext || {}),
         country,
         employee: { totalBonus: _totalBonus, salary },
         group,
@@ -322,7 +331,7 @@ export class ProcessedPayroll<T extends Record<string, unknown>> {
     let netSalary = salary;
 
     if (group) {
-      const commonSalary = Number(group.meta?.commonSalary);
+      const commonSalary = Number(group.commonSalary);
       if (!Number.isNaN(commonSalary) && commonSalary > 0) {
         salary = commonSalary;
         netSalary = commonSalary;

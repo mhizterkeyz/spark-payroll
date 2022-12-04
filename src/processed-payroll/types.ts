@@ -1,15 +1,18 @@
 import * as moment from 'moment';
 
-export type IProcessedPayrollPayloadEmployee = {
+export type IProcessedPayrollPayloadEmployee<
+  T extends Record<string, unknown>,
+> = {
   id: string;
   group?: string;
+  remittanceProcessingContext?: T;
   salary?: number;
 };
 
 export type IProcessedPayrollPayloadGroup<T extends Record<string, unknown>> = {
   id: string;
-  taxSettings?: T;
-  meta?: { commonSalary?: number };
+  remittanceProcessingContext?: T;
+  commonSalary?: number;
 };
 
 export type IProcessedPayrollPayloadAddon = {
@@ -43,19 +46,25 @@ export type IProcessedPayrollEmployees = {
 };
 
 export type ProcessedPayrollPayload<T extends Record<string, unknown>> = {
-  currency: string;
   country: string;
-  employees: IProcessedPayrollPayloadEmployee[];
+  employees: IProcessedPayrollPayloadEmployee<T>[];
   addons: IProcessedPayrollPayloadAddon[];
   groups: IProcessedPayrollPayloadGroup<T>[];
   cycle: number;
   year: number;
   proRateMonth: string;
   remittanceProcessingContext?: T;
+  beforeEach?(payload: {
+    employee: IProcessedPayrollPayloadEmployee<T>;
+    group: IProcessedPayrollPayloadGroup<T>;
+  }): {
+    employee: IProcessedPayrollPayloadEmployee<T>;
+    group: IProcessedPayrollPayloadGroup<T>;
+  };
 };
 
 export type ProcessEmployeePayload<T extends Record<string, unknown>> = {
-  employee: IProcessedPayrollPayloadEmployee;
+  employee: IProcessedPayrollPayloadEmployee<T>;
   group?: IProcessedPayrollPayloadGroup<T>;
   bonuses?: IProcessedPayrollPayloadAddon[];
   deductions?: IProcessedPayrollPayloadAddon[];
@@ -66,11 +75,13 @@ export type ProcessEmployeePayload<T extends Record<string, unknown>> = {
   workDaysInMonth: number;
 };
 
-export type ProcessPayload = {
-  employees: IProcessedPayrollPayloadEmployee[];
+export type ProcessPayload<
+  T extends Record<string, unknown> = Record<string, unknown>,
+> = {
+  employees: IProcessedPayrollPayloadEmployee<T>[];
   beforeEach?(payload: {
-    employee: IProcessedPayrollPayloadEmployee;
-  }): IProcessedPayrollPayloadEmployee;
+    employee: IProcessedPayrollPayloadEmployee<T>;
+  }): IProcessedPayrollPayloadEmployee<T>;
   afterEach?(payload: {
     processedEmployee: IProcessedPayrollEmployees;
     employeeRemittances: { totalRemittances: number };

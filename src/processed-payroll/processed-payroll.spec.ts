@@ -34,8 +34,8 @@ describe('Processed Payroll', () => {
             { group: 'three', id: 'three', salary: 50000 },
           ],
           groups: [
-            { id: 'one', meta: { commonSalary: 150000 } },
-            { id: 'two', meta: { commonSalary: 0 } },
+            { id: 'one', commonSalary: 150000 },
+            { id: 'two', commonSalary: 0 },
           ],
         }),
       );
@@ -190,7 +190,7 @@ describe('Processed Payroll', () => {
         new ProcessedPayroll<ProcessNigeriaRemittancePayload>(
           getPayrollPayload({
             remittanceProcessingContext: {
-              taxSettings: { enabled: true },
+              tax: { enabled: true },
             },
             employees: [
               { group: 'group-one', id: 'one', salary: 52083 },
@@ -199,10 +199,12 @@ describe('Processed Payroll', () => {
             groups: [
               {
                 id: 'group-one',
-                taxSettings: {
-                  enabled: true,
-                  type: 'WITHHOLDING',
-                  whTaxRate: 0.05,
+                remittanceProcessingContext: {
+                  tax: {
+                    enabled: true,
+                    type: 'WITHHOLDING',
+                    whTaxRate: 0.05,
+                  },
                 },
               },
             ],
@@ -279,7 +281,7 @@ describe('Processed Payroll', () => {
         new ProcessedPayroll<ProcessNigeriaRemittancePayload>(
           getPayrollPayload({
             remittanceProcessingContext: {
-              taxSettings: { enabled: true },
+              tax: { enabled: true },
             },
             employees: [{ id: 'money', salary: 52083 }],
           }),
@@ -303,7 +305,7 @@ describe('Processed Payroll', () => {
         new ProcessedPayroll<ProcessNigeriaRemittancePayload>(
           getPayrollPayload({
             remittanceProcessingContext: {
-              taxSettings: { enabled: true },
+              tax: { enabled: true },
             },
             employees: [
               { id: 'one', salary: 52083 },
@@ -312,8 +314,10 @@ describe('Processed Payroll', () => {
             groups: [
               {
                 id: 'group-one',
-                taxSettings: {
-                  enabled: false,
+                remittanceProcessingContext: {
+                  tax: {
+                    enabled: false,
+                  },
                 },
               },
             ],
@@ -409,7 +413,7 @@ describe('Processed Payroll', () => {
         new ProcessedPayroll<ProcessNigeriaRemittancePayload>(
           getPayrollPayload({
             remittanceProcessingContext: {
-              taxSettings: { enabled: true },
+              tax: { enabled: true },
             },
             employees: [{ id: 'one', salary: 152083 }],
             addons: [
@@ -486,7 +490,7 @@ describe('Processed Payroll', () => {
     it('should update totals', () => {
       const processedPayroll = new ProcessedPayroll(
         getPayrollPayload({
-          remittanceProcessingContext: { taxSettings: { enabled: true } },
+          remittanceProcessingContext: { tax: { enabled: true } },
           employees: [{ id: 'one', salary: 52083 }],
         }),
       );
@@ -520,7 +524,7 @@ describe('Processed Payroll', () => {
     it('should update employee amounts', () => {
       const processedPayroll = new ProcessedPayroll(
         getPayrollPayload({
-          remittanceProcessingContext: { taxSettings: { enabled: true } },
+          remittanceProcessingContext: { tax: { enabled: true } },
           employees: [{ id: 'one', salary: 52083 }],
         }),
       );

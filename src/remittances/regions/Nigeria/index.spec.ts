@@ -11,7 +11,7 @@ describe('Nigeria', () => {
       const { tax } = Nigeria.process<ProcessNigeriaRemittanceResponse>({
         employee: { salary: 52083, totalBonus: 0 },
         country: '',
-        taxSettings: { enabled: true },
+        tax: { enabled: true },
       });
 
       expect(tax).toBeDefined();

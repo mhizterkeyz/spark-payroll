@@ -16,17 +16,21 @@ export type TaxSettings = {
 
 export type ProcessTaxPayload = {
   totalBonus: number;
-  taxSettings?: TaxSettings;
+  tax?: TaxSettings;
   group?: {
-    taxSettings?: TaxSettings;
+    remittanceProcessingContext?: {
+      tax?: TaxSettings;
+    };
   };
   salary: number;
 };
 
 export type ProcessNigeriaRemittancePayload = {
-  taxSettings?: TaxSettings;
+  tax?: TaxSettings;
   group?: {
-    taxSettings?: TaxSettings;
+    remittanceProcessingContext?: {
+      tax?: TaxSettings;
+    };
   };
 };
 

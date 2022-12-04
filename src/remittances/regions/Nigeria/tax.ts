@@ -4,7 +4,7 @@ import { ProcessTaxPayload } from './types';
 
 export class Tax {
   private static getSettings(payload: ProcessTaxPayload) {
-    return payload.group?.taxSettings || payload.taxSettings || {};
+    return payload.group?.remittanceProcessingContext?.tax || payload.tax || {};
   }
 
   static process(payload: ProcessTaxPayload) {
@@ -33,7 +33,7 @@ export class Tax {
     // Second Consolidated Relief is 20% of Gross Income
     const secondConsolidatedRelief = Util.mul(grossSalary, 0.2);
     const totalCustomRelief = Util.sum(
-      ...(settings.taxRelief?.map(({ value }) => value) || [0]),
+      ...(settings.taxRelief?.map(({ value = 0 }) => value) || [0]),
     );
     const taxableSalary = Math.max(
       Util.sub(

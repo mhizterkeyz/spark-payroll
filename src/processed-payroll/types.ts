@@ -46,7 +46,9 @@ export type IProcessedPayrollEmployees = {
   totalDeduction: number;
   totalBonus: number;
   totalProrate: number;
+  totalFee: number;
   totalRemittances: number;
+  remittanceMeta?: unknown;
   arrayIndex?: number;
   payloadArrayIndex?: number;
 };

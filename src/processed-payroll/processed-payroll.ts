@@ -2,6 +2,7 @@ import keyBy from 'lodash.keyby';
 import moment from 'moment';
 import { Remittances } from 'remittances/remittances';
 import { Util } from 'shared/util';
+import { Fees } from '../fees/fees';
 import {
   IProcessedPayrollEmployees,
   IProcessedPayrollPayloadAddon,
@@ -209,6 +210,7 @@ export class ProcessedPayroll<T extends Record<string, unknown>> {
     let totalProrate = 0;
     let totalSalaries = 0;
     let totalRemittances = 0;
+    let totalFee = 0;
 
     employees.forEach((_employee, payloadArrayIndex) => {
       let group = this.groupsKeyedById[_employee.group];
@@ -281,16 +283,26 @@ export class ProcessedPayroll<T extends Record<string, unknown>> {
 
       netSalary = Math.max(0, Util.sub(netSalary, _totalRemittances));
 
+      const fee = Fees.region(country).processForEmployee({
+        employee: {
+          netSalary,
+          addons: processedEmployee.addons,
+        },
+      });
+      const { totalFee: _totalFee } = fee;
+
       totalBonus = Util.sum(totalBonus, _totalBonus);
       totalDeductions = Util.sum(totalDeductions, _totalDeduction);
       totalNetSalaries = Util.sum(totalNetSalaries, netSalary);
       totalProrate = Util.sum(totalProrate, _totalProrate);
       totalSalaries = Util.sum(totalSalaries, salary);
       totalRemittances = Util.sum(totalRemittances, _totalRemittances);
+      totalFee = Util.sum(totalFee, _totalFee);
 
       const _processedEmployee = {
         ...processedEmployee,
         ...employeeRemittances,
+        ...fee,
         netSalary,
         arrayIndex: processedEmployeesArray.length,
         payloadArrayIndex,
@@ -313,6 +325,7 @@ export class ProcessedPayroll<T extends Record<string, unknown>> {
       totalProrate,
       totalSalaries,
       totalRemittances,
+      totalFee,
       employees: processedEmployeesArray,
       mappedEmployees: processedEmployees,
     });

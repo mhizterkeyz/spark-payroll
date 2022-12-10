@@ -223,6 +223,13 @@ export class ProcessedPayroll<T extends Record<string, unknown>> {
         ? beforeEach({ employee: transformed.employee })
         : transformed.employee;
 
+      // @ts-ignore
+      employee.remittanceProcessingContext =
+        employee.remittanceProcessingContext || {
+          ...employee,
+          ...(employee.remittances || {}),
+        };
+
       this.payloadEmployeesKeyedById[employee.id] = employee;
 
       const addons = this.addonsKeyedByEmployee[employee.id] || {
@@ -237,6 +244,13 @@ export class ProcessedPayroll<T extends Record<string, unknown>> {
           addons.deductions = addons.deductions?.concat(groupAddons.deductions);
           addons.prorates = addons.prorates?.concat(groupAddons.prorates);
         }
+
+        // @ts-ignore
+        group.remittanceProcessingContext =
+          group.remittanceProcessingContext || {
+            ...group,
+            ...(group.remittances || {}),
+          };
       }
 
       const processedEmployee = this.processEmployee({

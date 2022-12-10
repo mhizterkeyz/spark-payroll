@@ -7,12 +7,18 @@ export type IProcessedPayrollPayloadEmployee<
   group?: string;
   remittanceProcessingContext?: T;
   salary?: number;
+  salaryBreakdown?: unknown;
+  useWholeAmountsForSalaryBreakdown?: boolean;
+  remittances?: Record<string, unknown>;
 };
 
 export type IProcessedPayrollPayloadGroup<T extends Record<string, unknown>> = {
   id: string;
   remittanceProcessingContext?: T;
   commonSalary?: number;
+  salaryBreakdown?: unknown;
+  useWholeAmountsForSalaryBreakdown?: boolean;
+  remittances?: Record<string, unknown>;
 };
 
 export type IProcessedPayrollPayloadAddon = {

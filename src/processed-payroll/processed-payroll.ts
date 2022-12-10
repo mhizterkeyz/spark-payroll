@@ -326,6 +326,7 @@ export class ProcessedPayroll<T extends Record<string, unknown>> {
       totalSalaries,
       totalRemittances,
       totalFee,
+      totalAmount: Util.sum(totalNetSalaries, totalFee),
       employees: processedEmployeesArray,
       mappedEmployees: processedEmployees,
     });

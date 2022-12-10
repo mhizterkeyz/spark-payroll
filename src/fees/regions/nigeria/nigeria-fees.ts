@@ -1,4 +1,4 @@
-import { Util } from 'shared/util';
+import { Util } from '../../../shared/util';
 import { Fees } from '../../fees';
 import { RegionFee } from '../../types';
 import { ProcessFeePayload } from './types';

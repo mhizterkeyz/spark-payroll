@@ -1,6 +1,6 @@
-import { RemittanceRegionService } from 'remittances/interfaces';
-import { Remittances } from 'remittances/remittances';
-import { ProcessRemittancePayload } from 'remittances/types';
+import { RemittanceRegionService } from '../../interfaces';
+import { Remittances } from '../../remittances';
+import { ProcessRemittancePayload } from '../../types';
 import { COUNTRY } from './constants';
 import { Tax } from './tax';
 import { ProcessNigeriaRemittancePayload } from './types';

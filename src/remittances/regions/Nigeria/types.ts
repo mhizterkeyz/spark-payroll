@@ -1,4 +1,4 @@
-import { NamedAmount } from 'remittances/types';
+import { NamedAmount } from '../../types';
 
 export enum TaxTypeEnum {
   PAYE = 'PAYE',

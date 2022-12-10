@@ -1,7 +1,7 @@
 import keyBy from 'lodash.keyby';
 import moment from 'moment';
-import { Remittances } from 'remittances/remittances';
-import { Util } from 'shared/util';
+import { Remittances } from '../remittances/remittances';
+import { Util } from '../shared/util';
 import { Fees } from '../fees/fees';
 import {
   IProcessedPayrollEmployees,

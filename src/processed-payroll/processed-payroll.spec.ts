@@ -1,4 +1,4 @@
-import { ProcessNigeriaRemittancePayload } from 'remittances/regions/Nigeria/types';
+import { ProcessNigeriaRemittancePayload } from '../remittances/regions/Nigeria/types';
 import { ProcessedPayroll } from './processed-payroll';
 import { ProcessedPayrollPayload } from './types';
 

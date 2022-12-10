@@ -1,4 +1,4 @@
-import { Util } from 'shared/util';
+import { Util } from '../../../shared/util';
 import { NIGERIAN_MINIMUM_WAGE } from './constants';
 import { Tax } from './tax';
 import { ProcessTaxPayload, TaxType, TaxTypeEnum } from './types';

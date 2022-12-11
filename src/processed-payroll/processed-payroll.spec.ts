@@ -63,6 +63,7 @@ describe('Processed Payroll', () => {
               type: 'deduction',
               amount: 7,
               entity: 'one',
+              name: '',
               dates: [],
             },
             {
@@ -70,12 +71,14 @@ describe('Processed Payroll', () => {
               amount: 8,
               entity: 'group-one',
               dates: [],
+              name: '',
             },
             {
               type: 'deduction',
               amount: 10,
               entity: 'two',
               dates: [],
+              name: '',
             },
           ],
           groups: [{ id: 'group-one' }],
@@ -107,6 +110,7 @@ describe('Processed Payroll', () => {
               amount: 0,
               entity: 'group-one',
               dates: [{ days: ['15', '30'], month: 'November', year: 2022 }],
+              name: '',
             },
             {
               type: 'prorate',
@@ -114,6 +118,7 @@ describe('Processed Payroll', () => {
               entity: 'group-one',
               dates: [],
               frequency: 'recurring',
+              name: '',
             },
             {
               type: 'prorate',
@@ -121,6 +126,7 @@ describe('Processed Payroll', () => {
               entity: 'two',
               dates: [{ days: ['15', '30'], month: 'November', year: 2022 }],
               frequency: 'once',
+              name: '',
             },
           ],
           groups: [{ id: 'group-one' }],
@@ -153,6 +159,7 @@ describe('Processed Payroll', () => {
               entity: 'one',
               dates: [],
               frequency: '',
+              name: '',
             },
             {
               type: 'bonus',
@@ -160,6 +167,7 @@ describe('Processed Payroll', () => {
               entity: 'group-one',
               dates: [],
               frequency: '',
+              name: '',
             },
             {
               type: 'bonus',
@@ -167,6 +175,7 @@ describe('Processed Payroll', () => {
               entity: 'two',
               dates: [],
               frequency: '',
+              name: '',
             },
           ],
           groups: [{ id: 'group-one' }],
@@ -423,6 +432,7 @@ describe('Processed Payroll', () => {
                 entity: 'one',
                 dates: [],
                 frequency: '',
+                name: '',
               },
               {
                 type: 'prorate',
@@ -430,6 +440,7 @@ describe('Processed Payroll', () => {
                 entity: 'one',
                 dates: [{ days: ['15', '30'], month: 'November', year: 2022 }],
                 frequency: 'recurring',
+                name: '',
               },
               {
                 type: 'deduction',
@@ -437,6 +448,7 @@ describe('Processed Payroll', () => {
                 entity: 'one',
                 dates: [],
                 frequency: '',
+                name: '',
               },
             ],
           }),
@@ -477,6 +489,7 @@ describe('Processed Payroll', () => {
 
       data = processedPayroll.updateAddons({
         type: 'bonus',
+        name: '',
         amount: 100,
         entity: 'one',
       });
@@ -504,13 +517,14 @@ describe('Processed Payroll', () => {
       } = processedPayroll.get();
 
       const data = processedPayroll.updateAddons(
-        { type: 'bonus', amount: 20000, entity: 'one' },
-        { type: 'deduction', amount: 1000, entity: 'one' },
+        { type: 'bonus', amount: 20000, entity: 'one', name: '' },
+        { type: 'deduction', amount: 1000, entity: 'one', name: '' },
         {
           type: 'prorate',
           amount: 0,
           entity: 'one',
           dates: [{ days: ['05', '30'], month: 'November', year: 2022 }],
+          name: '',
         },
       );
 
@@ -538,13 +552,14 @@ describe('Processed Payroll', () => {
       } = processedPayroll.get().mappedEmployees.one;
 
       const data = processedPayroll.updateAddons(
-        { type: 'bonus', amount: 20000, entity: 'one' },
-        { type: 'deduction', amount: 1000, entity: 'one' },
+        { type: 'bonus', amount: 20000, entity: 'one', name: '' },
+        { type: 'deduction', amount: 1000, entity: 'one', name: '' },
         {
           type: 'prorate',
           amount: 0,
           entity: 'one',
           dates: [{ days: ['05', '30'], month: 'November', year: 2022 }],
+          name: '',
         },
       );
 

@@ -7,7 +7,10 @@ export abstract class RemittanceRegionService {
     T extends Record<string, unknown>,
   >(
     _payload: ProcessRemittancePayload<T>,
-  ): K & { totalRemittances: number; remittanceMeta?: unknown } {
+  ): K & {
+    totalRemittances: number;
+    remittances: { name: string; amount: number }[];
+  } {
     throw new Error('method not implemented');
   }
 }

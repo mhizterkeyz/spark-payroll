@@ -204,6 +204,10 @@ export class ProcessedPayroll<T extends Record<string, unknown>> {
     );
     const processedEmployeesArray: IProcessedPayrollEmployees[] = [];
     const processedEmployees: Record<string, IProcessedPayrollEmployees> = {};
+    const feeBreakdown: Record<
+      string,
+      { name: string; description: string; amount: number }
+    > = {};
     let totalBonus = 0;
     let totalDeductions = 0;
     let totalNetSalaries = 0;
@@ -289,7 +293,7 @@ export class ProcessedPayroll<T extends Record<string, unknown>> {
           addons: processedEmployee.addons,
         },
       });
-      const { totalFee: _totalFee } = fee;
+      const { totalFee: _totalFee, feeBreakdown: _feeBreakdown } = fee;
 
       totalBonus = Util.sum(totalBonus, _totalBonus);
       totalDeductions = Util.sum(totalDeductions, _totalDeduction);
@@ -298,6 +302,17 @@ export class ProcessedPayroll<T extends Record<string, unknown>> {
       totalSalaries = Util.sum(totalSalaries, salary);
       totalRemittances = Util.sum(totalRemittances, _totalRemittances);
       totalFee = Util.sum(totalFee, _totalFee);
+
+      _feeBreakdown.forEach((breakdown) => {
+        let item = feeBreakdown[breakdown.name];
+        if (item) {
+          item.amount = Util.sum(item.amount, breakdown.amount);
+        } else {
+          item = breakdown;
+        }
+
+        feeBreakdown[breakdown.name] = item;
+      });
 
       const _processedEmployee = {
         ...processedEmployee,
@@ -326,6 +341,7 @@ export class ProcessedPayroll<T extends Record<string, unknown>> {
       totalSalaries,
       totalRemittances,
       totalFee,
+      feeBreakdown: Object.values(feeBreakdown),
       totalAmount: Util.sum(totalNetSalaries, totalFee),
       employees: processedEmployeesArray,
       mappedEmployees: processedEmployees,
@@ -347,7 +363,8 @@ export class ProcessedPayroll<T extends Record<string, unknown>> {
 
     const employeeAddons: {
       amount: number;
-      meta: unknown;
+      name: string;
+      description?: string;
       addonId: string;
       type: string;
     }[] = [];
@@ -370,7 +387,7 @@ export class ProcessedPayroll<T extends Record<string, unknown>> {
       netSalary = Util.sum(netSalary, bonus.amount);
       totalBonus = Util.sum(totalBonus, bonus.amount);
 
-      employeeAddons.push({ ...bonus, meta: bonus, addonId: bonus.id });
+      employeeAddons.push({ ...bonus, addonId: bonus.id });
     });
 
     deductions?.forEach((deduction) => {
@@ -381,7 +398,6 @@ export class ProcessedPayroll<T extends Record<string, unknown>> {
 
         employeeAddons.push({
           ...deduction,
-          meta: deduction,
           addonId: deduction.id,
         });
       }
@@ -417,7 +433,6 @@ export class ProcessedPayroll<T extends Record<string, unknown>> {
           employeeAddons.push({
             ...prorate,
             amount: deduction,
-            meta: { ...prorate, deduction },
             addonId: prorate.id,
           });
           netSalary = Util.sub(netSalary - deduction);

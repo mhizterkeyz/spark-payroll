@@ -11,28 +11,75 @@ describe('NigeriaFees', () => {
     it('should return totalFee for employee', () => {
       expect(
         instance.processForEmployee({
-          employee: { netSalary: 5000, addons: [] },
+          employee: { netSalary: 5000, addons: [], remittances: [] },
         }),
-      ).toEqual({ totalFee: 10 });
+      ).toEqual({
+        totalFee: 10,
+        feeBreakdown: [
+          {
+            amount: 10,
+            description: 'Fee for transferring to recipient',
+            name: 'Transfer fee',
+          },
+        ],
+      });
       expect(
         instance.processForEmployee({
-          employee: { netSalary: 50000, addons: [] },
+          employee: { netSalary: 50000, addons: [], remittances: [] },
         }),
-      ).toEqual({ totalFee: 25 });
+      ).toEqual({
+        totalFee: 25,
+        feeBreakdown: [
+          {
+            amount: 25,
+            description: 'Fee for transferring to recipient',
+            name: 'Transfer fee',
+          },
+        ],
+      });
       expect(
         instance.processForEmployee({
-          employee: { netSalary: 50000.1, addons: [] },
+          employee: { netSalary: 50000.1, addons: [], remittances: [] },
         }),
-      ).toEqual({ totalFee: 50 });
+      ).toEqual({
+        totalFee: 50,
+        feeBreakdown: [
+          {
+            amount: 50,
+            description: 'Fee for transferring to recipient',
+            name: 'Transfer fee',
+          },
+        ],
+      });
 
       expect(
         instance.processForEmployee({
           employee: {
             netSalary: 10,
-            addons: [{ addonId: '', amount: 0, type: '' }],
+            addons: [{ addonId: '', amount: 0, type: '', name: '' }],
+            remittances: [{ name: '', amount: 0 }],
           },
         }),
-      ).toEqual({ totalFee: 60 });
+      ).toEqual({
+        totalFee: 160,
+        feeBreakdown: [
+          {
+            amount: 10,
+            description: 'Fee for transferring to recipient',
+            name: 'Transfer fee',
+          },
+          {
+            name: 'Processing fee',
+            amount: 50,
+            description: 'Fee for processing bonus, deduction and/or prorate',
+          },
+          {
+            name: 'Remittance fee',
+            amount: 100,
+            description: 'Fee for processing remittances',
+          },
+        ],
+      });
     });
   });
 });

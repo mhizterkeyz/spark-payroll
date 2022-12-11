@@ -3,7 +3,7 @@ import * as moment from 'moment';
 export type IProcessedPayrollPayloadEmployee<
   T extends Record<string, unknown>,
 > = {
-  id: string;
+  id?: string;
   group?: string;
   remittanceProcessingContext?: T;
   salary?: number;
@@ -13,7 +13,7 @@ export type IProcessedPayrollPayloadEmployee<
 };
 
 export type IProcessedPayrollPayloadGroup<T extends Record<string, unknown>> = {
-  id: string;
+  id?: string;
   remittanceProcessingContext?: T;
   commonSalary?: number;
   salaryBreakdown?: unknown;
@@ -24,31 +24,32 @@ export type IProcessedPayrollPayloadGroup<T extends Record<string, unknown>> = {
 export type IProcessedPayrollPayloadAddon = {
   id?: string;
   amount: number;
+  name: string;
+  description?: string;
   dates?: { days?: string[]; year?: number; month: string }[];
   type: string;
   entity: string;
   frequency?: string;
 };
 
-export type IProcessedPayrollTotals = {
-  totalSalaries: number;
-  totalNetSalaries: number;
-  totalDeductions: number;
-  totalBonus: number;
-  totalProrate: number;
-};
-
 export type IProcessedPayrollEmployees = {
   id: string;
   salary: number;
   netSalary: number;
-  addons: { amount: number; type: string; meta?: unknown; addonId: string }[];
+  addons: {
+    amount: number;
+    type: string;
+    name: string;
+    description?: string;
+    addonId: string;
+  }[];
   totalDeduction: number;
   totalBonus: number;
   totalProrate: number;
   totalFee: number;
   totalRemittances: number;
-  remittanceMeta?: unknown;
+  remittances: { name: string; amount: number }[];
+  feeBreakdown: { name: string; amount: number; description: string }[];
   arrayIndex?: number;
   payloadArrayIndex?: number;
 };

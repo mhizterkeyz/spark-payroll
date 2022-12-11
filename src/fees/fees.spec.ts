@@ -3,7 +3,7 @@ import { RegionFee } from './types';
 
 class DummyRegionFee implements RegionFee {
   processForEmployee(_config: unknown) {
-    return { totalFee: 0 };
+    return { totalFee: 0, feeBreakdown: [] };
   }
 }
 

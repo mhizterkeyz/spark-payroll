@@ -1,5 +1,8 @@
 import { IProcessedPayrollEmployees } from '../../../processed-payroll/types';
 
 export type ProcessFeePayload = {
-  employee: Pick<IProcessedPayrollEmployees, 'netSalary' | 'addons'>;
+  employee: Pick<
+    IProcessedPayrollEmployees,
+    'netSalary' | 'addons' | 'remittances'
+  >;
 };

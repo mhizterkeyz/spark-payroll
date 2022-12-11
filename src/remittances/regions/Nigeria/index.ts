@@ -14,9 +14,12 @@ export class Nigeria implements RemittanceRegionService {
 
     const tax = Tax.process({ ..._payload, ...employee });
 
-    const res = { tax } as unknown as K;
+    const res = {
+      tax,
+      remittances: [{ name: 'Tax', amount: tax }],
+    } as unknown as K;
 
-    return { ...res, totalRemittances: tax, remittanceMeta: {} };
+    return { ...res, totalRemittances: tax };
   }
 }
 

@@ -1,6 +1,6 @@
 {
   "name": "spark-payroll",
-  "version": "3.1.3",
+  "version": "3.1.4",
   "license": "MIT",
   "description": "Package for computing payroll",
   "author": "mhizterkeyz",

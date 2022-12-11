@@ -11,6 +11,14 @@ describe('NigeriaFees', () => {
     it('should return totalFee for employee', () => {
       expect(
         instance.processForEmployee({
+          employee: { netSalary: 0, addons: [], remittances: [] },
+        }),
+      ).toEqual({
+        totalFee: 0,
+        feeBreakdown: [],
+      });
+      expect(
+        instance.processForEmployee({
           employee: { netSalary: 5000, addons: [], remittances: [] },
         }),
       ).toEqual({

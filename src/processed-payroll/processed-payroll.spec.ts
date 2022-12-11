@@ -231,6 +231,46 @@ describe('Processed Payroll', () => {
       expect(data.mappedEmployees.two.netSalary).toBe(78833.0293);
       expect(data.mappedEmployees.two.salary).toBe(83333);
     });
+
+    it('should skip omit items', () => {
+      const processedPayroll =
+        new ProcessedPayroll<ProcessNigeriaRemittancePayload>(
+          getPayrollPayload({
+            omit: {
+              salary: true,
+              bonus: true,
+              tax: true,
+            },
+            remittanceProcessingContext: {
+              tax: { enabled: true },
+            },
+            employees: [
+              { group: 'group-one', id: 'one', salary: 52083 },
+              { id: 'two', salary: 83333, group: '' },
+            ],
+            groups: [
+              {
+                id: 'group-one',
+                remittanceProcessingContext: {
+                  tax: {
+                    enabled: true,
+                    type: 'WITHHOLDING',
+                    whTaxRate: 0.05,
+                  },
+                },
+              },
+            ],
+            addons: [{ name: '', entity: 'one', amount: 10000, type: 'bonus' }],
+          }),
+        );
+      const data = processedPayroll.get();
+
+      expect(data.totalRemittances).toBe(0);
+      expect(data.totalNetSalaries).toBe(0);
+      expect(data.totalSalaries).toBe(0);
+      expect(data.totalAmount).toBe(0);
+      expect(data.totalFee).toBe(0);
+    });
   });
 
   describe('updateEmployees', () => {

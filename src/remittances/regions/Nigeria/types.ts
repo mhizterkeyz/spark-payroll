@@ -26,6 +26,9 @@ export type ProcessTaxPayload = {
 };
 
 export type ProcessNigeriaRemittancePayload = {
+  omit?: {
+    tax?: boolean;
+  };
   tax?: TaxSettings;
   group?: {
     remittanceProcessingContext?: {
@@ -36,4 +39,5 @@ export type ProcessNigeriaRemittancePayload = {
 
 export type ProcessNigeriaRemittanceResponse = {
   tax: number;
+  remittances: { name: string; amount: number }[];
 };

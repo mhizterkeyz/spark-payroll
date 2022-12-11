@@ -7,6 +7,10 @@ export class NigeriaFees implements RegionFee {
   name = 'Nigeria';
 
   private getBaseFee(amount: number) {
+    if (amount <= 0) {
+      return 0;
+    }
+
     if (amount <= 5000) {
       return 10;
     }
@@ -20,14 +24,21 @@ export class NigeriaFees implements RegionFee {
 
   processForEmployee(payload: ProcessFeePayload) {
     const { employee } = payload;
-    let totalFee = this.getBaseFee(employee.netSalary);
-    const feeBreakdown = [
-      {
+    const feeBreakdown: {
+      name: string;
+      description: string;
+      amount: number;
+    }[] = [];
+    let totalFee = 0;
+
+    if (employee.netSalary > 0) {
+      totalFee = Util.sum(totalFee, this.getBaseFee(employee.netSalary));
+      feeBreakdown.push({
         name: 'Transfer fee',
         amount: totalFee,
         description: 'Fee for transferring to recipient',
-      },
-    ];
+      });
+    }
     if (Array.isArray(employee.addons) && employee.addons.length) {
       totalFee = Util.sum(totalFee, 50);
       feeBreakdown.push({

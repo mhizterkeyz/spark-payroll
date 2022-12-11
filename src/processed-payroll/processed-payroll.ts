@@ -195,6 +195,7 @@ export class ProcessedPayroll<T extends Record<string, unknown>> {
       proRateMonth,
       country,
       remittanceProcessingContext = {},
+      omit,
       beforeEach: _beforeEach,
     } = this.payload;
     const date = moment().year(year).month(proRateMonth);
@@ -255,19 +256,24 @@ export class ProcessedPayroll<T extends Record<string, unknown>> {
         group.remittanceProcessingContext =
           group.remittanceProcessingContext || {
             ...group,
+            ...employee,
             ...(group.remittances || {}),
+            ...(employee.remittances || {}),
           };
       }
 
-      const processedEmployee = this.processEmployee({
-        employee,
-        group,
-        ...addons,
-        date,
-        year,
-        proRateMonth,
-        workDaysInMonth,
-      });
+      const processedEmployee = this.processEmployee(
+        {
+          employee,
+          group,
+          ...addons,
+          date,
+          year,
+          proRateMonth,
+          workDaysInMonth,
+        },
+        { omit },
+      );
       const {
         totalBonus: _totalBonus,
         totalDeduction: _totalDeduction,
@@ -282,6 +288,7 @@ export class ProcessedPayroll<T extends Record<string, unknown>> {
         country,
         employee: { totalBonus: _totalBonus, salary },
         group,
+        omit,
       });
       const { totalRemittances: _totalRemittances } = employeeRemittances;
 
@@ -348,7 +355,10 @@ export class ProcessedPayroll<T extends Record<string, unknown>> {
     });
   }
 
-  private processEmployee(payload: ProcessEmployeePayload<T>) {
+  private processEmployee(
+    payload: ProcessEmployeePayload<T>,
+    config: { omit?: { salary?: boolean; bonus?: boolean } },
+  ) {
     const {
       employee,
       group,
@@ -360,6 +370,7 @@ export class ProcessedPayroll<T extends Record<string, unknown>> {
       date: processingDate,
       workDaysInMonth,
     } = payload;
+    const { omit } = config;
 
     const employeeAddons: {
       amount: number;
@@ -373,6 +384,10 @@ export class ProcessedPayroll<T extends Record<string, unknown>> {
     let totalDeduction = 0;
     let totalProrate = 0;
     let { salary = 0 } = employee;
+    if (omit?.salary) {
+      salary = 0;
+    }
+
     let netSalary = salary;
 
     if (group) {
@@ -383,12 +398,14 @@ export class ProcessedPayroll<T extends Record<string, unknown>> {
       }
     }
 
-    bonuses?.forEach((bonus) => {
-      netSalary = Util.sum(netSalary, bonus.amount);
-      totalBonus = Util.sum(totalBonus, bonus.amount);
+    if (!omit?.bonus) {
+      bonuses?.forEach((bonus) => {
+        netSalary = Util.sum(netSalary, bonus.amount);
+        totalBonus = Util.sum(totalBonus, bonus.amount);
 
-      employeeAddons.push({ ...bonus, addonId: bonus.id });
-    });
+        employeeAddons.push({ ...bonus, addonId: bonus.id });
+      });
+    }
 
     deductions?.forEach((deduction) => {
       const amountAfterDeduction = Util.sub(netSalary - deduction.amount);

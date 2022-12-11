@@ -63,6 +63,10 @@ export type ProcessedPayrollPayload<T extends Record<string, unknown>> = {
   year: number;
   proRateMonth: string;
   remittanceProcessingContext?: T;
+  omit?: Record<string, boolean> & {
+    salary?: boolean;
+    bonus?: boolean;
+  };
   beforeEach?(payload: {
     employee: IProcessedPayrollPayloadEmployee<T>;
     group: IProcessedPayrollPayloadGroup<T>;

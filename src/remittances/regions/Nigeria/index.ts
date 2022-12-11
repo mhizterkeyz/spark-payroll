@@ -1,3 +1,4 @@
+import { Util } from '../../../shared/util';
 import { RemittanceRegionService } from '../../interfaces';
 import { Remittances } from '../../remittances';
 import { ProcessRemittancePayload } from '../../types';
@@ -9,17 +10,23 @@ export class Nigeria implements RemittanceRegionService {
   static process<K extends Record<string, unknown>>(
     payload: ProcessRemittancePayload,
   ): K & { totalRemittances: number } {
-    const { employee, ..._payload } =
+    const { employee, omit, ..._payload } =
       payload as ProcessRemittancePayload<ProcessNigeriaRemittancePayload>;
+    const res: Record<string, unknown> = {
+      totalRemittances: 0,
+      remittances: [],
+    };
 
-    const tax = Tax.process({ ..._payload, ...employee });
+    // Tax
+    if (!omit?.tax) {
+      const tax = Tax.process({ ..._payload, ...employee });
 
-    const res = {
-      tax,
-      remittances: [{ name: 'Tax', amount: tax }],
-    } as unknown as K;
+      res.tax = tax;
+      res.totalRemittances = Util.sum(res.totalRemittances as number, tax);
+      (res.remittances as unknown[]).push({ name: 'Tax', amount: tax });
+    }
 
-    return { ...res, totalRemittances: tax };
+    return res as unknown as K & { totalRemittances: number };
   }
 }
 
